@@ -1,17 +1,18 @@
 package com.mycompany.matrixmultiplier;
 
-public class MatrixMultiplier {
+import javax.swing.SwingUtilities;
 
-    private DynamicGrid grid;
+public class MatrixMultiplier {
     
-    public static void main(String[] args) {
-        int size = 100;
-        int sizeGrid = 400;
-        DynamicGrid grid = new DynamicGrid(size);
-        grid.setTitle("Matriz");
-        grid.setSize(sizeGrid * 2,sizeGrid);
-        grid.setLocationRelativeTo(null);
-        grid.setDefaultCloseOperation(grid.EXIT_ON_CLOSE);
-        grid.setVisible(true);
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    StarterMenu frame = new StarterMenu();
+                }
+            });
     }
 }

@@ -3,162 +3,76 @@ package com.mycompany.matrixmultiplier;
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.swing.JFrame;
 import java.awt.GridLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-public class DynamicGrid extends JFrame{
+public class DynamicGrid extends JPanel{
     
-    private int size, cubicsize;
-    private int[] data;
-    private int[][] dataMatrix;
-    private JPanel grid;
-    
-    public DynamicGrid()
+    public static JPanel draw(int dataMatrix[][])
     {
-        _setSize(20);
-        draw();
+        return draw(dataMatrix,false);
     }
     
-    public DynamicGrid(int size)
+    public static JPanel draw(int dataMatrix[][], boolean isFinal)
     {
-        _setSize(size);
-        draw();
-    }
-    
-    public DynamicGrid(int[] data)
-    {
-        _setData(data);
-        draw();
-    }
-    
-    public DynamicGrid(int [][] dataMatrix)
-    {
-        _setDataMatrix(dataMatrix);
-        draw();
-    }
-    
-    private void draw_test()
-    {
-        setLayout(new GridLayout(size,size));
-        JLabel[] label = new JLabel[cubicsize];
-        
-        for(int i = 0; i < cubicsize; i++)
-        {
-            label[i] = Model(data[i]);
-            add(label[i]);
-        }
-    }
-    
-    private void draw()
-    {
-        grid = new JPanel(new GridLayout(size, size));
+        int size = dataMatrix.length;
+        JPanel grid = new JPanel(new GridLayout(size, size));
         JScrollPane scrollPane = new JScrollPane(grid);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        JLabel[] label = new JLabel[cubicsize];
+        JLabel[][] label = new JLabel[size][size];
         
-        for(int i = 0; i < cubicsize; i++)
+        for(int i = 0; i < size; i++)
         {
-            int color = (int) 255 / (data[i] + 1);
-            label[i] = Model(data[i]);
-            label[i].setOpaque(true);
-            label[i].setBackground( new Color(color,color,color));
-            grid.add(label[i]);
-        }
-        
-        getContentPane().add(scrollPane);
+            for(int j = 0; j < size; j++){
+                
+                label[i][j] = Model(dataMatrix[i][j]);
 
-        setTitle("Mostrar Layout");
-        setSize(50, 50); // Ajusta el tamaño según tus necesidades
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+                int color = 0;
+                int r = 0;
+                int g = 0;
+                int b = 0;
+
+                int aproxMax = size * 18;
+                
+                int aux = (dataMatrix[i][j] < 0) ? - dataMatrix[i][j] : dataMatrix[i][j];
+                aux = (aux > aproxMax) ? aproxMax : aux;
+                
+                if(!isFinal)
+                {
+                    color = 255 - (25 * aux);
+                    r = color; g = color; b = color;
+                }
+                else
+                {
+                    label[i][j].setForeground(Color.BLACK);
+                    r = (int) (255 - (255 * aux / aproxMax));
+                    g = (int) (255 * aux / aproxMax);
+                    b = 0;
+                    
+                    if (dataMatrix[i][j] < 0) {
+                        label[i][j].setForeground(Color.WHITE);
+                        b = r;
+                        r = g;
+                        g = 0;
+                    }
+                }
+                label[i][j].setOpaque(true);
+                label[i][j].setBackground( new Color(r,g,b));
+                grid.add(label[i][j]);
+            }
+        }
+        return grid;
     }
-    
-    public JLabel Model(int value)
+     
+    private static JLabel Model(int value)
     {
         JLabel model = new JLabel(" " + value + " ",JLabel.CENTER);
         model.setFont(new Font("Courier New", Font.ITALIC, 15));
-        //model.setSize(50, 50);
         model.setForeground(Color.blue);
         return model;
-    }
-    
-    public int _getSize(){ return size; }
-    public void _setSize(int size)
-    { 
-        this.size = size; 
-        this.cubicsize = (int) Math.pow(size,2);
-        this.data = new int[cubicsize];
-        this.dataMatrix = new int[size][size];
-        
-        randomizedValues();
-        
-    }
-    
-    public int[] _getData(){ return data; }
-    public void _setData(int[] data)
-    { 
-        this.data = data;
-        this.cubicsize = data.length;
-        this.size = (int) Math.sqrt(data.length);
-        this.dataMatrix = parser(data);
-    }
-    
-    public int[][] _getDataMatrix() { return dataMatrix; }
-    public void _setDataMatrix(int [][] dataMatrix)
-    {
-        this.dataMatrix = dataMatrix;
-        this.cubicsize = dataMatrix.length * dataMatrix[0].length;
-        this.size = dataMatrix.length;
-        this.data = parser(dataMatrix);
-    }
-    
-    private void randomizedValues()
-    {
-        for(int i = 0; i < cubicsize; i++)
-        {
-            data[i] = (int) (Math.random() * 10);
-        }
-        
-        dataMatrix = parser(data);
-    }
-    
-    public int[][] parser(int[] value)
-    {
-        int value_size = (int) Math.sqrt(value.length);
-        int[][] exit = new int [value_size][value_size];
-        
-        int index = 0;
-        for(int i = 0; i < value_size; i++)
-        {
-            for(int j = 0; j < value_size; j++)
-            {
-                exit[i][j] = value[index];
-                index++;
-            }
-        }
-        
-        return exit;
-    }
-    public int[] parser(int [][] value)
-    {
-        int value_size = value.length * value[0].length;
-        int[] exit = new int[value_size];
-        
-        int index = 0;
-        for(int i = 0; i < value.length; i++)
-        {
-            for(int j = 0; j < value[0].length; j++)
-            {
-                exit[index] = value[i][j];
-                index++;
-            }
-        }
-        
-        return exit;
     }
 }
